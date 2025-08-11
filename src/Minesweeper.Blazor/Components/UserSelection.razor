@@ -1,5 +1,40 @@
-@* TODO: [FULL_IMPLEMENTATION] Render user selection and creation UI *@
-<div class="user-selection">
-    <h3>User Selection</h3>
-    <p>[User Selection Placeholder]</p>
-</div>
+@inject Minesweeper.Blazor.Services.MinesweeperApiService ApiService
+
+<h3>User Selection</h3>
+@if (users == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <ul>
+        @foreach (var user in users)
+        {
+            <li>@user <button @onclick="() => SelectUser(user)">Select</button></li>
+        }
+    </ul>
+    <input @bind="newUserName" placeholder="New user name" />
+    <button @onclick="CreateUser">Create User</button>
+}
+
+@code {
+    private List<string>? users;
+    private string newUserName = "";
+    protected override async Task OnInitializedAsync()
+    {
+        users = await ApiService.GetUsersAsync();
+    }
+    private async Task CreateUser()
+    {
+        if (!string.IsNullOrWhiteSpace(newUserName))
+        {
+            await ApiService.CreateUserAsync(newUserName);
+            users = await ApiService.GetUsersAsync();
+            newUserName = "";
+        }
+    }
+    private void SelectUser(string user)
+    {
+        // TODO: [FULL_IMPLEMENTATION] Store selected user in app state
+    }
+}

@@ -1,6 +1,17 @@
-@* TODO: [FULL_IMPLEMENTATION] Render the leaderboard table *@
-<div class="leaderboard">
-    <h3>Leaderboard</h3>
+@page "/leaderboard"
+@inject Minesweeper.Blazor.Services.MinesweeperApiService ApiService
+
+<h2>Leaderboard</h2>
+@if (entries == null)
+{
+    <p>Loading...</p>
+}
+else if (entries.Count == 0)
+{
+    <p>No leaderboard data available.</p>
+}
+else
+{
     <table>
         <thead>
             <tr>
@@ -15,8 +26,27 @@
             </tr>
         </thead>
         <tbody>
-            <!-- Leaderboard rows will go here -->
-            <tr><td colspan="8">[Leaderboard Placeholder]</td></tr>
+            @foreach (var entry in entries)
+            {
+                <tr>
+                    <td>@entry.PlayerName</td>
+                    <td>@entry.LevelsCompleted</td>
+                    <td>@entry.CreditsEarned</td>
+                    <td>@entry.MinesFlagged</td>
+                    <td>@entry.TimesSpun</td>
+                    <td>@entry.PositiveOutcomeCount</td>
+                    <td>@entry.NegativeOutcomeCount</td>
+                    <td>@entry.DollarsAccumulated</td>
+                </tr>
+            }
         </tbody>
     </table>
-</div>
+}
+
+@code {
+    private List<Minesweeper.Blazor.Services.LeaderboardEntryDto>? entries;
+    protected override async Task OnInitializedAsync()
+    {
+        entries = await ApiService.GetLeaderboardAsync();
+    }
+}

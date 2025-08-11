@@ -1,5 +1,37 @@
 @page "/"
+@inject Minesweeper.Blazor.Services.MinesweeperApiService ApiService
 
 <h2>Game</h2>
-<MinesweeperBoard />
-<SlotMachine />
+@if (game == null)
+{
+    <button @onclick="StartGame">Start Game</button>
+    <p>No game started.</p>
+}
+else
+{
+    <MinesweeperBoard Game="game" OnCellReveal="RevealCell" />
+    <SlotMachine Game="game" OnSpin="SpinSlot" />
+}
+
+@code {
+    private Minesweeper.Blazor.Services.GameDto? game;
+    private string selectedUser = ""; // TODO: [FULL_IMPLEMENTATION] Get from app state
+    private async Task StartGame()
+    {
+        game = await ApiService.StartGameAsync(selectedUser);
+    }
+    private async Task RevealCell(int row, int col)
+    {
+        if (game != null)
+            game = await ApiService.RevealCellAsync(game.Id, row, col);
+    }
+    private async Task SpinSlot()
+    {
+        if (game != null)
+        {
+            var outcome = await ApiService.SpinSlotAsync(game.Id);
+            // TODO: [FULL_IMPLEMENTATION] Show outcome and update game state
+            game = await ApiService.GetGameAsync(game.Id);
+        }
+    }
+}

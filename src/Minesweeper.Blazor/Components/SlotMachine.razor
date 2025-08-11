@@ -1,12 +1,16 @@
-@* TODO: [FULL_IMPLEMENTATION] Render the slot machine UI and handle spins *@
+@using Minesweeper.Blazor.Services
+@code {
+    [Parameter] public GameDto? Game { get; set; }
+    [Parameter] public EventCallback OnSpin { get; set; }
+}
 <div class="slot-machine">
     <h3>Slot Machine</h3>
     <div class="reels">
-        <!-- Slot reels UI will go here -->
+        <!-- TODO: [FULL_IMPLEMENTATION] Show last spin outcome -->
         <p>[Slot Machine Placeholder]</p>
     </div>
     <div class="credits">
-        Credits: <span>[credits]</span> | Dollars: <span>[dollars]</span>
+        Credits: <span>@Game?.Credits</span> | Dollars: <span>@Game?.Dollars</span>
     </div>
-    <button>Spin</button>
+    <button @onclick="OnSpin">Spin</button>
 </div>

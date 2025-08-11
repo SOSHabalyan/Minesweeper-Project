@@ -1,5 +1,31 @@
-@* TODO: [FULL_IMPLEMENTATION] Render the minesweeper board grid and handle cell interactions *@
+@using Minesweeper.Blazor.Services
+
+@code {
+    [Parameter] public GameDto? Game { get; set; }
+    [Parameter] public EventCallback<(int row, int col)> OnCellReveal { get; set; }
+}
 <div class="minesweeper-board">
-    <!-- Minesweeper board UI will go here -->
-    <p>[Minesweeper Board Placeholder]</p>
+    @if (Game?.Board?.Cells != null)
+    {
+        <table>
+            @for (int r = 0; r < Game.Board.Rows; r++)
+            {
+                <tr>
+                    @for (int c = 0; c < Game.Board.Columns; c++)
+                    {
+                        var cell = Game.Board.Cells[r, c];
+                        <td>
+                            <button @onclick="() => OnCellReveal.InvokeAsync((r, c))">
+                                @(cell.IsRevealed ? (cell.HasMine ? "??" : cell.AdjacentMineCount.ToString()) : "?")
+                            </button>
+                        </td>
+                    }
+                </tr>
+            }
+        </table>
+    }
+    else
+    {
+        <p>[Minesweeper Board Placeholder]</p>
+    }
 </div>
